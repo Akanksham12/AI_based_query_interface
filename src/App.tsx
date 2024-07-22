@@ -1,43 +1,21 @@
 import { useState } from "react";
-import Select from "react-select";
 import Loader from "./components/Loader";
-
 import "./App.css";
 
-const options = [
-  { value: "MongoDB", label: "MongoDB" },
-  { value: "SQL", label: "SQL" },
-  { value: "PostgreSQL", label: "PostgreSQL" },
-  { value: "MariaDB", label: "MariaDB" },
-  { value: "Firebase", label: "Firebase" },
-  { value: "Prisma", label: "Prisma" },
-  { value: "GraphQL", label: "GraphQL" },
-  { value: "DynamoDB", label: "DynamoDB" },
-];
-
 function App() {
-  const [DB, setDB] = useState({ label: "", value: "" });
   const [query, setQuery] = useState("");
   const [result, setResult] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validations, setValidation] = useState({
-    db: false,
     query: false,
   });
-
-  const getDB = (param) => {
-    setCopySuccess(false);
-    setDB({ label: param.label, value: param.value });
-    setValidation({ query: validations.query, db: true });
-  };
 
   const getQuery = (e) => {
     setCopySuccess(false);
     setQuery(e.target.value);
     setValidation({
       query: e.target.value.length > 0,
-      db: validations.db,
     });
   };
 
@@ -52,7 +30,6 @@ function App() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          database: DB.value,
           query: query,
         }),
       });
@@ -63,11 +40,11 @@ function App() {
 
       const data = await response.json();
       setLoading(false);
-      setResult(data.query || "No query generated.");
+      setResult(JSON.stringify(data.results, null, 2) || "No result.");
     } catch (error) {
       setLoading(false);
-      setResult("Failed to generate query.");
-      console.error("Error generating query:", error);
+      setResult("Failed to generate or execute query.");
+      console.error("Error generating or executing query:", error);
     }
   };
 
@@ -75,32 +52,25 @@ function App() {
     <div className="App">
       <h1>Database Query Generator!</h1>
       <div className="app-inner">
-        <Select
-          placeholder="Select Your Database.."
-          options={options}
-          className="react-select"
-          onChange={getDB}
-        />
-
         <textarea
           rows={4}
           className="query-input"
-          placeholder={`Enter your Database Query. \n\nFor Example, find all users who live in California and have over 1000 credits..`}
+          placeholder={`Enter your request. For example, "Provide all details from table food_tbl".`}
           onChange={getQuery}
         />
 
         <button
-          disabled={!(validations.db && validations.query)}
+          disabled={!validations.query}
           onClick={generateQuery}
           className="generate-query"
         >
-          Generate Query
+          Generate and Execute Query
         </button>
         {!loading ? (
           result.length > 0 ? (
             <div className="result-text">
               <div className="clipboard">
-                <p>Here is your Query!</p>
+                <p>Here is your Result!</p>
                 <button
                   className="copy-btn"
                   onClick={() => {
