@@ -1,7 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import mysql from 'mysql2';
+import cors from 'cors'; // Import cors
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import cors from 'cors'; // Import the cors middleware
 
 // Initialize environment variables
 dotenv.config();
@@ -9,30 +10,56 @@ dotenv.config();
 const app = express();
 
 // Use CORS middleware
-app.use(cors()); // This will enable CORS for all origins
-
+app.use(cors());
 app.use(express.json());
+
+// MySQL Database connection
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'food_order'
+});
+
+connection.connect(error => {
+  if (error) {
+    console.error('Error connecting to the MySQL database:', error);
+    return;
+  }
+  console.log('Connected to the MySQL database');
+});
 
 // Access your API key as an environment variable
 const genAI = new GoogleGenerativeAI(process.env.API_KEY);
-
-// Get the generative model
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 // Route to handle query generation
 app.post('/generate-query', async (req, res) => {
-  const { database, query } = req.body;
+  const { query } = req.body;
 
-  if (!database || !query) {
-    return res.status(400).json({ error: 'Database and query are required' });
+  if (!query) {
+    return res.status(400).json({ error: 'Query is required' });
   }
 
-  const prompt = `Create a ${database} request to ${query.charAt(0).toLowerCase() + query.slice(1)}:`;
+  const prompt = `Generate only an SQL query no additional text for the following request: ${query}`;
 
   try {
     const result = await model.generateContent(prompt);
-    const generatedQuery = result.response.text().trim(); // Ensure no extra whitespace
-    res.json({ query: generatedQuery });
+    let generatedQuery = result.response.text().trim(); // Ensure no extra whitespace
+
+    // Clean the query to remove unwanted characters
+    generatedQuery = generatedQuery.replace(/```sql|```/g, '').trim();
+
+    console.log('Generated SQL Query:', generatedQuery);
+
+    // Execute the cleaned query
+    connection.query(generatedQuery, (error, results) => {
+      if (error) {
+        console.error('Error executing query:', error);
+        return res.status(500).json({ error: 'Failed to execute query' });
+      }
+      res.json({ results });
+    });
   } catch (error) {
     console.error('Error generating query:', error);
     res.status(500).json({ error: 'Failed to generate query' });
