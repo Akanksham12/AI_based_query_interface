@@ -1,157 +1,148 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Lato:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Poppins:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,100;1,300;1,400;1,500&display=swap");
 
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+/* Root Container */
 #root {
   margin: 0 auto;
   padding: 1rem;
   text-align: center;
 }
 
+/* Header Styling */
 h1 {
-  color: whitesmoke;
-  font-family: "Poppins";
+  color: #333;
+  font-family: 'Poppins', sans-serif;
   margin: 30px;
+  font-size: 2.5rem; /* Larger font size for the header */
 }
 
+/* Main Inner Container */
 .app-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.react-select {
-  font-family: "Lato", sans-serif;
-  font-weight: 600;
-  width: 300px;
-}
-
+/* Query Input Field */
 .query-input {
-  width: 330px;
-  /* height: 20px; */
-  padding: 10px;
+  width: 100%;
+  max-width: 600px;
+  padding: 15px;
   outline: none;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 600;
+  font-size: 1.1rem; /* Larger font size for better readability */
   margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
 }
 
-/* CSS */
+/* Generate Query Button */
 .generate-query {
   margin-top: 20px;
-  align-items: center;
   background-color: #0a66c2;
-  border: 0;
-  border-radius: 100px;
-  box-sizing: border-box;
+  border: none;
+  border-radius: 8px;
   color: #ffffff;
   cursor: pointer;
-  display: inline-flex;
-  font-family: "Poppins", sans-serif;
-  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
   font-weight: 600;
-  justify-content: center;
-  line-height: 20px;
-  max-width: 480px;
-  min-height: 40px;
-  min-width: 0px;
-  overflow: hidden;
-  padding: 0px;
-  padding-left: 20px;
-  padding-right: 20px;
-  text-align: center;
-  touch-action: manipulation;
-  transition: background-color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
-    box-shadow 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s,
-    color 0.167s cubic-bezier(0.4, 0, 0.2, 1) 0s;
-  user-select: none;
-  -webkit-user-select: none;
-  vertical-align: middle;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
 }
 
-.generate-query:hover,
-.generate-query:focus {
-  background-color: #16437e;
-  color: #ffffff;
+.generate-query:hover {
+  background-color: #0c4b8b;
 }
 
 .generate-query:active {
-  background: #09223b;
-  color: rgb(255, 255, 255, 0.7);
+  background-color: #093a7d;
 }
 
 .generate-query:disabled {
   cursor: not-allowed;
-  background: rgba(0, 0, 0, 0.389);
-  color: rgba(224, 224, 224, 0.3);
+  background: #dcdcdc;
+  color: #a0a0a0;
 }
 
-/* CSS */
+/* Copy Button */
 .copy-btn {
-  background-color: #fff;
+  background-color: #ffffff;
   border: 1px solid #d5d9d9;
   border-radius: 8px;
-  box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
-  box-sizing: border-box;
-  color: #0f1111;
+  color: #0a66c2;
   cursor: pointer;
-  font-family: "Poppins", sans-serif;
-  font-size: 13px;
-  line-height: 29px;
-  padding: 0 10px 0 11px;
-  position: relative;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  padding: 5px 10px;
   text-align: center;
   text-decoration: none;
   height: 30px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  vertical-align: middle;
   width: auto;
 }
 
 .copy-btn:hover {
-  background-color: #f7fafa;
+  background-color: #f0f0f0;
 }
 
 .copy-btn:focus {
-  border-color: #008296;
-  box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+  border-color: #0a66c2;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
   outline: 0;
 }
 
-.clipboard {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
+/* Result Text Styling */
 .result-text {
-  color: whitesmoke;
-  font-family: "Poppins", sans-serif;
-  min-width: 500px;
-  border: 1px solid #ffffff;
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+  max-width: 600px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   margin-top: 20px;
   padding: 20px;
+  background-color: #fff;
+  text-align: left;
 }
 
-/* New Styles for Results Formatting */
+/* Result Item Styling */
 .result-item {
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  background-color: #f9f9f9;
 }
 
 .result-entry {
   margin-bottom: 5px;
+  font-size: 1rem; /* Adjust font size for readability */
 }
 
 .result-entry strong {
-  color: #333;
+  color: #0a66c2; /* Highlight color */
+  font-weight: 700; /* Bold text */
 }
 
 @media only screen and (min-width: 375px) {
   .react-select {
-    font-family: "Lato", sans-serif;
+    font-family: 'Lato', sans-serif;
     font-weight: 600;
   }
 
@@ -160,17 +151,18 @@ h1 {
     /* height: 20px; */
     padding: 10px;
     outline: none;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-weight: 600;
     margin-top: 20px;
   }
 
   .result-text {
-    color: whitesmoke;
-    font-family: "Poppins", sans-serif;
+    color: #333;
+    font-family: 'Poppins', sans-serif;
     min-width: 200px;
-    border: 1px solid #ffffff;
+    border: 1px solid #ddd;
     margin-top: 20px;
     padding: 20px;
+    background-color: #fff;
   }
 }
