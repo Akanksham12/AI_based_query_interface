@@ -1,17 +1,18 @@
 import { useState } from "react";
 import Loader from "./components/Loader";
+
 import "./App.css";
 
 function App() {
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState<any[]>([]);
   const [copySuccess, setCopySuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validations, setValidation] = useState({
     query: false,
   });
 
-  const getQuery = (e) => {
+  const getQuery = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCopySuccess(false);
     setQuery(e.target.value);
     setValidation({
@@ -40,10 +41,16 @@ function App() {
 
       const data = await response.json();
       setLoading(false);
-      setResult(JSON.stringify(data.results, null, 2) || "No result.");
+
+      // Format data if necessary
+      if (Array.isArray(data.results)) {
+        setResult(data.results);
+      } else {
+        setResult([]);
+      }
     } catch (error) {
       setLoading(false);
-      setResult("Failed to generate or execute query.");
+      setResult([]);
       console.error("Error generating or executing query:", error);
     }
   };
@@ -74,17 +81,17 @@ function App() {
                 <button
                   className="copy-btn"
                   onClick={() => {
-                    navigator.clipboard.writeText(result);
+                    navigator.clipboard.writeText(JSON.stringify(result, null, 2));
                     setCopySuccess(true);
                   }}
                 >
                   {copySuccess ? "Copied" : "Copy"}
                 </button>
               </div>
-              <pre>{result}</pre> {/* Preserve formatting */}
+              <pre>{formatResults(result)}</pre> {/* Format the result */}
             </div>
           ) : (
-            <></>
+            <p>No result found.</p>
           )
         ) : (
           <Loader />
@@ -93,5 +100,22 @@ function App() {
     </div>
   );
 }
+
+// Helper function to format results
+const formatResults = (results: any[]) => {
+  if (results.length === 0) {
+    return "No results to display.";
+  }
+  
+  return results.map((item, index) => (
+    <div key={index} className="result-item">
+      {Object.entries(item).map(([key, value]) => (
+        <div key={key} className="result-entry">
+          <strong>{key}:</strong> {value}
+        </div>
+      ))}
+    </div>
+  ));
+};
 
 export default App;
