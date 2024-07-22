@@ -1,11 +1,16 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import cors from 'cors'; // Import the cors middleware
 
 // Initialize environment variables
 dotenv.config();
 
 const app = express();
+
+// Use CORS middleware
+app.use(cors()); // This will enable CORS for all origins
+
 app.use(express.json());
 
 // Access your API key as an environment variable
