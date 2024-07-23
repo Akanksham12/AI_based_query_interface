@@ -37,11 +37,11 @@ const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 app.post('/generate-query', async (req, res) => {
   const { query } = req.body;
 
-  if (!query) {
-    return res.status(400).json({ error: 'Query is required' });
+  if (!query || query.trim().length === 0) {
+    return res.status(400).json({ error: 'Please provide a request for an SQL query.' });
   }
 
-  const prompt = `Generate only an SQL query no additional text for the following request: ${query}`;
+  const prompt = `Generate only an SQL query no additional text for the following request: ${query} if query cannot be generated display NO`;
 
   try {
     const result = await model.generateContent(prompt);
@@ -52,17 +52,25 @@ app.post('/generate-query', async (req, res) => {
 
     console.log('Generated SQL Query:', generatedQuery);
 
-    // Execute the cleaned query
-    connection.query(generatedQuery, (error, results) => {
-      if (error) {
-        console.error('Error executing query:', error);
-        return res.status(500).json({ error: 'Failed to execute query' });
-      }
-      res.json({ results });
-    });
+    if (generatedQuery === "NO") {
+      return res.status(400).json({ error: 'Please provide a valid SQL query request.' });
+    }
+
+    // Simple validation: check if the query contains valid SQL syntax
+    if (generatedQuery.toLowerCase().startsWith('select') || generatedQuery.toLowerCase().startsWith('show') || generatedQuery.toLowerCase().startsWith('describe')) {
+      connection.query(generatedQuery, (error, results) => {
+        if (error) {
+          console.error('Error executing query:', error);
+          return res.status(500).json({ error: `Error executing query: ${error.message}` });
+        }
+        res.json({ results });
+      });
+    } else {
+      return res.status(400).json({ error: `The provided input "${query}" is not a valid SQL query.` });
+    }
   } catch (error) {
     console.error('Error generating query:', error);
-    res.status(500).json({ error: 'Failed to generate query' });
+    res.status(500).json({ error: `Failed to generate query: ${error.message}` });
   }
 });
 
