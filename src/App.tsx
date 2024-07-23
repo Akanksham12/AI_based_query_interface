@@ -5,7 +5,7 @@ import "./App.css";
 
 function App() {
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<any[]>([]);
+  const [result, setResult] = useState<string | null>(null); // Initialize as null
   const [copySuccess, setCopySuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [validations, setValidation] = useState({
@@ -36,21 +36,37 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok.");
+        const errorData = await response.json();
+        setLoading(false);
+        setResult(errorData.error || "Failed to generate or execute query.");
+        return;
       }
 
       const data = await response.json();
       setLoading(false);
 
-      // Format data if necessary
-      if (Array.isArray(data.results)) {
-        setResult(data.results);
+      if (data.error) {
+        setResult(data.error);
+      } else if (data.results) {
+        // Format the results to display as styled blocks
+        const formattedResults = Array.isArray(data.results)
+          ? data.results.map((item: any, index: number) => (
+              <div key={index} className="result-item">
+                {Object.entries(item).map(([key, value]) => (
+                  <div key={key} className="result-entry">
+                    <strong>{key}:</strong> {value}
+                  </div>
+                ))}
+              </div>
+            ))
+          : "No result found.";
+        setResult(<>{formattedResults}</>);
       } else {
-        setResult([]);
+        setResult("No result found.");
       }
     } catch (error) {
       setLoading(false);
-      setResult([]);
+      setResult(`Failed to generate or execute query. ${error.message}`);
       console.error("Error generating or executing query:", error);
     }
   };
@@ -73,49 +89,30 @@ function App() {
         >
           Generate and Execute Query
         </button>
-        {!loading ? (
-          result.length > 0 ? (
-            <div className="result-text">
-              <div className="clipboard">
-                <p>Here is your Result!</p>
-                <button
-                  className="copy-btn"
-                  onClick={() => {
-                    navigator.clipboard.writeText(JSON.stringify(result, null, 2));
-                    setCopySuccess(true);
-                  }}
-                >
-                  {copySuccess ? "Copied" : "Copy"}
-                </button>
-              </div>
-              <pre>{formatResults(result)}</pre> {/* Format the result */}
-            </div>
-          ) : (
-            <p>No result found.</p>
-          )
-        ) : (
+        {loading ? (
           <Loader />
+        ) : result ? (
+          <div className="result-text">
+            <div className="clipboard">
+              <p>Here is your Result!</p>
+              <button
+                className="copy-btn"
+                onClick={() => {
+                  navigator.clipboard.writeText(typeof result === 'string' ? result : (result as JSX.Element).props.children);
+                  setCopySuccess(true);
+                }}
+              >
+                {copySuccess ? "Copied" : "Copy"}
+              </button>
+            </div>
+            <div>{result}</div>
+          </div>
+        ) : (
+          <p className="placeholder-text">Please enter a query and click "Generate and Execute Query".</p>
         )}
       </div>
     </div>
   );
 }
-
-// Helper function to format results
-const formatResults = (results: any[]) => {
-  if (results.length === 0) {
-    return "No results to display.";
-  }
-  
-  return results.map((item, index) => (
-    <div key={index} className="result-item">
-      {Object.entries(item).map(([key, value]) => (
-        <div key={key} className="result-entry">
-          <strong>{key}:</strong> {value}
-        </div>
-      ))}
-    </div>
-  ));
-};
 
 export default App;
