@@ -10,7 +10,7 @@
 /* Body Styling */
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #f4f4f4;
+  background-color: black;
   color: #333;
 }
 
@@ -23,7 +23,7 @@ body {
 
 /* Header Styling */
 h1 {
-  color: #333;
+  color: white;
   font-family: 'Poppins', sans-serif;
   margin: 30px;
   font-size: 2.5rem; /* Larger font size for the header */
@@ -52,13 +52,30 @@ h1 {
   border-radius: 8px;
   background-color: #fff;
 }
+
+/* Dropdown Menu */
+select {
+  width: 100%;
+  max-width: 600px;
+  padding: 15px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Placeholder Text */
 .placeholder-text {
   color: #666;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   margin-top: 20px;
 }
-
 
 /* Generate Query Button */
 .generate-query {
@@ -147,6 +164,23 @@ h1 {
   font-weight: 700; /* Bold text */
 }
 
+/* Loading Component */
+.loader {
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #0a66c2; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-top: 20px;
+}
+
+/* Spin animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @media only screen and (min-width: 375px) {
   .react-select {
     font-family: 'Lato', sans-serif;
@@ -155,7 +189,6 @@ h1 {
 
   .query-input {
     min-width: 300px;
-    /* height: 20px; */
     padding: 10px;
     outline: none;
     font-family: 'Poppins', sans-serif;
